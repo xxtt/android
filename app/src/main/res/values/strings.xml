@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">placeinspace</string>
-    <string name="action_bar_green">green</string>
-    <string name="action_bar_orange">orange</string>
-    <string name="action_bar_yellow">yellow</string>
-    <string name="action_bar_all">all</string>
-    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="app_name">PlaceInSpace</string>
+   <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="action_search">Search</string>
+    <string name="action_share">Share</string>
+    <string name="send_to">Share App with ...</string>
+    <string name="app_label">Label</string>
+    <string name="search_hint">Hint</string>
+    <string name="action_news">News</string>
+    <string name="desc_list_item_icon">Item Icon</string>
+
+    <string-array name="nav_drawer_items">
+        <item>Accessories</item>
+        <item>Cafe</item>
+        <item>Gallery</item>
+        <item>Medical</item>
+        <item>Pub</item>
+        <item>Restaurant</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/rubric_accessories</item>
+        <item>@drawable/rubric_cafe</item>
+        <item>@drawable/rubric_gallery</item>
+        <item>@drawable/rubric_medical</item>
+        <item>@drawable/rubric_pub</item>
+        <item>@drawable/rubric_restaurant</item>
+    </array>
 
 
 </resources>
