@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PlaceInSpace</string>
-   <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+    <string name="app_name">Place In Space</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="action_search">Search</string>
@@ -12,23 +12,46 @@
     <string name="search_hint">Hint</string>
     <string name="action_news">News</string>
     <string name="desc_list_item_icon">Item Icon</string>
+    <string name="action_directions">Directions</string>
+    <string name="action_call">Call</string>
+    <string name="address">address:</string>
+    <string name="phone">phone:</string>
+    <string name="more">see more ..</string>
 
     <string-array name="nav_drawer_items">
-        <item>Accessories</item>
-        <item>Cafe</item>
-        <item>Gallery</item>
-        <item>Medical</item>
-        <item>Pub</item>
-        <item>Restaurant</item>
+        <item>All places</item>
+        <item>Restaurants</item>
+        <item>Pubs &amp; Bars</item>
+        <item>Coffee &amp; Tea</item>
+        <item>Health &amp; Medical</item>
+        <item>Shopping</item>
+        <item>Nightlife</item>
+        <item>Arts &amp; Entertainment</item>
+        <item>Intellectual clubs</item>
+        <item>Sport &amp; Fitness</item>
+        <item>Beauty &amp; Spa</item>
+        <item>Hotels &amp; Hostels</item>
+        <item>PlaceInCity</item>
+        <item>Other..</item>
+
+
     </string-array>
 
     <array name="nav_drawer_icons">
-        <item>@drawable/rubric_accessories</item>
-        <item>@drawable/rubric_cafe</item>
-        <item>@drawable/rubric_gallery</item>
-        <item>@drawable/rubric_medical</item>
-        <item>@drawable/rubric_pub</item>
-        <item>@drawable/rubric_restaurant</item>
+        <item>@drawable/all</item>
+        <item>@drawable/restaurant</item>
+        <item>@drawable/pub</item>
+        <item>@drawable/coffee</item>
+        <item>@drawable/health</item>
+        <item>@drawable/shopping</item>
+        <item>@drawable/night</item>
+        <item>@drawable/arts</item>
+        <item>@drawable/intellectual</item>
+        <item>@drawable/sport</item>
+        <item>@drawable/beauty</item>
+        <item>@drawable/hotels</item>
+        <item>@drawable/city</item>
+        <item>@drawable/other</item>
     </array>
 
 

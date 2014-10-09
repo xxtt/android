@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,9 +15,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.xml.Place;
 
 /**
  * @author Pranay Airan
@@ -29,12 +33,15 @@ public class NewsActivity extends ListActivity {
     }
 
     CodeLearnAdapter chapterListAdapter;
+    ArrayList<Place> placeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_layout);
 
+        Intent mIntent = getIntent();
+        placeList = mIntent.getParcelableArrayListExtra(MapsActivity.NEWS_FEED);
 
         chapterListAdapter = new CodeLearnAdapter();
 
@@ -45,25 +52,26 @@ public class NewsActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
 
-        codeLeanChapter chapter = chapterListAdapter.getCodeLearnChapter(position);
+        Place place = chapterListAdapter.getPlace(position);
 
-        Toast.makeText(this, chapter.chapterName, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(getBaseContext(), YouTubePlayerActivity.class);
+        intent.putExtra(MapsActivity.YOUTUBE_ID, place);
+        startActivity(intent);
     }
 
     public class CodeLearnAdapter extends BaseAdapter {
 
-        List<codeLeanChapter> codeLeanChapterList = getDataForListView();
 
         @Override
         public int getCount() {
             // TODO Auto-generated method stub
-            return codeLeanChapterList.size();
+            return placeList.size();
         }
 
         @Override
-        public codeLeanChapter getItem(int arg0) {
+        public Place getItem(int arg0) {
             // TODO Auto-generated method stub
-            return codeLeanChapterList.get(arg0);
+            return placeList.get(arg0);
         }
 
         @Override
@@ -80,35 +88,22 @@ public class NewsActivity extends ListActivity {
                 arg1 = inflater.inflate(R.layout.news_list_item, arg2, false);
             }
 
-            TextView chapterName = (TextView) arg1.findViewById(R.id.textView1);
-            TextView chapterDesc = (TextView) arg1.findViewById(R.id.textView2);
+            TextView title = (TextView) arg1.findViewById(R.id.news_place_title);
+            TextView text = (TextView) arg1.findViewById(R.id.news_place_text);
+            ImageView image = (ImageView) arg1.findViewById(R.id.news_category_image);
 
-            codeLeanChapter chapter = codeLeanChapterList.get(arg0);
+            Place place = placeList.get(arg0);
 
-            chapterName.setText(chapter.chapterName);
-            chapterDesc.setText(chapter.chapterDescription);
+            title.setText(place.getTitle());
+            text.setText(place.getNews());
+            image.setImageResource(place.getResourceId());
 
             return arg1;
         }
 
-        public codeLeanChapter getCodeLearnChapter(int position) {
-            return codeLeanChapterList.get(position);
+        public Place getPlace(int position) {
+            return placeList.get(position);
         }
-
-    }
-
-    public List<codeLeanChapter> getDataForListView() {
-        List<codeLeanChapter> codeLeanChaptersList = new ArrayList<codeLeanChapter>();
-
-        for (int i = 0; i < 10; i++) {
-
-            codeLeanChapter chapter = new codeLeanChapter();
-            chapter.chapterName = "Chapter " + i;
-            chapter.chapterDescription = "This is description for chapter " + i;
-            codeLeanChaptersList.add(chapter);
-        }
-
-        return codeLeanChaptersList;
 
     }
 }

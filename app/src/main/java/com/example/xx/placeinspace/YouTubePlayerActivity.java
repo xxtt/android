@@ -2,10 +2,14 @@ package com.example.xx.placeinspace;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
+import com.example.xml.Place;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
@@ -19,19 +23,44 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
     private YouTubePlayerView playerView;
     private YouTubePlayer player;
     private boolean fullscreen;
-    public static String YOUTUBE_ID;
+    public Place place;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.yt_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        YOUTUBE_ID = getIntent().getStringExtra(MapsActivity.YOUTUBE_ID);
-
         setContentView(R.layout.youtube_player_layout);
 
-        baseLayout = (LinearLayout) findViewById(R.id.layout);
+        place = (Place) getIntent().getParcelableExtra(MapsActivity.YOUTUBE_ID);
+
+        getActionBar().setTitle(place.getTitle());
+        getActionBar().setIcon(place.getResourceId());
+
+
+
+        baseLayout = (LinearLayout) findViewById(R.id.youtube);
         playerView = (YouTubePlayerView) findViewById(R.id.player);
         playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);
+
+        TextView text = (TextView) findViewById(R.id.text);
+        text.setText(place.getText());
+
+        TextView address = (TextView) findViewById(R.id.address_text);
+        address.setText(place.getAddress());
+
+        TextView phone = (TextView) findViewById(R.id.phone_text);
+        phone.setText(place.getPhone());
+
+        if(!place.getNews().isEmpty()){
+            TextView news = (TextView) findViewById(R.id.news_text);
+            news.setText(place.getNews());
+        }
+
         doLayout();
     }
 
@@ -42,7 +71,7 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
         player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
         player.setOnFullscreenListener(this);
         if (!wasRestored) {
-            player.loadVideo(YOUTUBE_ID);
+            player.loadVideo(place.getYouTubeId());
         }
     }
 
@@ -80,7 +109,7 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        this.finish();
+  //      this.finish();
         return true;
     }
 }

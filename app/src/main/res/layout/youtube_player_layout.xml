@@ -1,16 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/place"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="#80000000">
+    android:layout_height="match_parent">
 
-  <com.google.android.youtube.player.YouTubePlayerView
-      android:id="@+id/player"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="text"
+            style="@style/UiTestTextView" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_marginLeft="10dp"
+            android:text="@string/address"
+            style="@style/UiTestTextView" />
+
+        <TextView
+            android:id="@+id/address_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/address"
+
+            style="@style/UiTestTextView" />
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/address"
+            android:layout_marginLeft="10dp"
+            android:text="@string/phone"
+            style="@style/UiTestTextView" />
+
+        <TextView
+            android:id="@+id/phone_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/address"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/phone"
+            android:text="+38063856632"
+            style="@style/UiTestTextView" />
+
+        <TextView
+            android:id="@+id/link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phone"
+            android:layout_marginLeft="10dp"
+            android:text="www.placeins.com"
+            style="@style/UiTestTextView" />
+
+        <ImageView
+            android:id="@+id/baby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/link"
+            android:src="@drawable/ic_action_baby" />
+
+        <ImageView
+            android:id="@+id/parking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/link"
+            android:layout_toRightOf="@+id/baby"
+            android:src="@drawable/ic_action_parking" />
+
+        <ImageView
+            android:id="@+id/smoking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/link"
+            android:layout_toRightOf="@+id/parking"
+            android:src="@drawable/ic_action_smoking" />
+
+        <ImageView
+            android:id="@+id/music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/link"
+            android:layout_toRightOf="@+id/smoking"
+            android:src="@drawable/ic_action_music" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/youtube"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="#80000000"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.google.android.youtube.player.YouTubePlayerView
+            android:id="@+id/player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/youtube">
+
+        <TextView
+            android:id="@+id/news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/action_news"
+            style="@style/UiTestTextView"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/news_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/news"
+            android:layout_marginLeft="10dp"
+
+            style="@style/UiTestTextView" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

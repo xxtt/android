@@ -1,6 +1,5 @@
 package com.example.xx.placeinspace;
 
-import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -15,35 +14,28 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.xml.Place;
 import com.example.xx.placeinspace.adapter.NavDrawerListAdapter;
 import com.example.xx.placeinspace.model.NavDrawerItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.FIFOLimitedMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -71,6 +63,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class MapsActivity extends ActionBarActivity {
@@ -79,11 +72,11 @@ public class MapsActivity extends ActionBarActivity {
     private ArrayList<Marker> markerList = new ArrayList<Marker>();
     private ImageLoader imageLoader;
     private DisplayImageOptions options;
-    private Pair<Marker, String> currentMarker = null;
+    private Place currentMarker = null;
     public final static String YOUTUBE_ID = "YOUTUBE_ID";
     public final static String NEWS_FEED = "NEWS_FEED";
-    HashMap<Integer, String> items = new HashMap<Integer, String>();
-    static Map<String, List<Place>> map = new HashMap<String, List<Place>>();
+
+    static Map<Integer, List<Place>> mCategoryList = new HashMap<Integer, List<Place>>();
     private ProgressDialog pDialog;
 
     private DrawerLayout mDrawerLayout;
@@ -93,19 +86,56 @@ public class MapsActivity extends ActionBarActivity {
     private ArrayList<NavDrawerItem> navDrawerItems;
     private String[] navMenuTitles;
     private TypedArray navMenuIcons;
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        initDrawer(savedInstanceState);
-
         setUpMapIfNeeded();
+
+        initDrawerLayout();
+
         new InitMarkers().execute();
+
         initImageLoader();
+        //      if (savedInstanceState == null) {
+        // on first time display view for first nav item
+        //      }
+    }
+
+    private void initDrawerLayout() {
+        mTitle = getTitle();
+
+        navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
+        // enabling action bar app icon and behaving it as toggle button
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.drawable.ic_drawer, //nav menu toggle icon
+                R.string.drawer_open, // nav drawer open - description for accessibility
+                R.string.drawer_close // nav drawer close - description for accessibility
+        ) {
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+                // calling onPrepareOptionsMenu() to show action bar icons
+                invalidateOptionsMenu();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+//                getActionBar().setTitle(mDrawerTitle);
+
+                // calling onPrepareOptionsMenu() to hide action bar icons
+                invalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
     @Override
@@ -121,72 +151,22 @@ public class MapsActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void initDrawer(Bundle savedInstanceState) {
-        mTitle = getTitle();
-
-        mTitle = mDrawerTitle = getTitle();
-
-        // load slide menu items
+    private void initDrawerList() {
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-
-        // nav drawer icons from resources
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
-
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
-        // adding nav drawer items to array
-
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
-        //      navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
 
-        // Recycle the typed array
-        navMenuIcons.recycle();
-
-        // setting the nav drawer list adapter
-        adapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
-        mDrawerList.setAdapter(adapter);
-
-        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
-        // enabling action bar app icon and behaving it as toggle button
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_drawer, //nav menu toggle icon
-                R.string.app_name, // nav drawer open - description for accessibility
-                R.string.app_name // nav drawer close - description for accessibility
-        ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        if (savedInstanceState == null) {
-            // on first time display view for first nav item
-            displayView(0);
+        for (Integer category : mCategoryList.keySet()) {
+            navDrawerItems.add(new NavDrawerItem(navMenuTitles[category], navMenuIcons.getResourceId(category, -1)));
         }
+//      navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
 
+        adapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
+        mDrawerList.setAdapter(adapter);
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        displayView(0);
     }
 
     /**
@@ -195,8 +175,7 @@ public class MapsActivity extends ActionBarActivity {
     private class SlideMenuClickListener implements
             ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // display view for selected nav drawer item
             displayView(position);
         }
@@ -206,15 +185,22 @@ public class MapsActivity extends ActionBarActivity {
      * Diplaying fragment view for selected nav drawer list item
      */
     private void displayView(int position) {
-        // update the main content
-        switch (position) {
-            case 0:
-                break;
-            default:
-                break;
+        if (position == 0) {
+            for (List<Place> places : mCategoryList.values()) {
+                for (Place place : places) {
+                    place.getMarker().setVisible(true);
+                }
+            }
+        } else {
+            ArrayList<Integer> list = new ArrayList<Integer>(mCategoryList.keySet());
+            for (Integer category : list) {
+                boolean b = category.equals(list.get(position - 1));
+                for (Place place : mCategoryList.get(category)) {
+                    place.getMarker().setVisible(b);
+                }
+            }
         }
 
-        // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);
         setTitle(navMenuTitles[position]);
@@ -233,8 +219,15 @@ public class MapsActivity extends ActionBarActivity {
         // Handle action bar actions click
         switch (item.getItemId()) {
             case R.id.action_news:
+                ArrayList<Place> list = new ArrayList<Place>();
+                for (List<Place> places : mCategoryList.values()) {
+                    for (Place place : places) {
+                        if (!place.getNews().isEmpty()) list.add(place);
+                    }
+                }
+
                 Intent intent = new Intent(getBaseContext(), NewsActivity.class);
-                intent.putExtra(NEWS_FEED, "hello !!");
+                intent.putParcelableArrayListExtra(NEWS_FEED, list);
                 startActivity(intent);
                 return true;
             case R.id.action_share:
@@ -250,11 +243,13 @@ public class MapsActivity extends ActionBarActivity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_search).setVisible(!drawerOpen);
-        menu.findItem(R.id.action_share).setVisible(!drawerOpen);
-        menu.findItem(R.id.action_news).setVisible(!drawerOpen);
+        if (mDrawerList != null) {
+            // if nav drawer is opened, hide the action items
+            boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+            menu.findItem(R.id.action_search).setVisible(!drawerOpen);
+            menu.findItem(R.id.action_share).setVisible(!drawerOpen);
+            menu.findItem(R.id.action_news).setVisible(!drawerOpen);
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -273,14 +268,14 @@ public class MapsActivity extends ActionBarActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+        if (mDrawerToggle != null) mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        if (mDrawerToggle != null) mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     ///////////////Drawer code ends //////////////////
@@ -301,6 +296,8 @@ public class MapsActivity extends ActionBarActivity {
 
         JSONArray markers = null;
 
+        Log.i("initMarkerMap", "success is  " + success);
+
         if (success == 1) {
 
             markers = json.getJSONArray("markers");
@@ -313,22 +310,34 @@ public class MapsActivity extends ActionBarActivity {
                 double x = marker.getDouble("x");
                 double y = marker.getDouble("y");
                 String yt = marker.getString("yt");
-                String category = marker.getString("category");
+                int category = marker.getInt("category");
+                String address = marker.getString("address");
+                String phone = marker.getString("phone");
+                String link = marker.getString("link");
+                String news = marker.getString("news");
+                boolean smoking = marker.getInt("smoking") != 0;
+                boolean baby = marker.getInt("baby") != 0;
+                boolean parking = marker.getInt("parking") != 0;
+                boolean music = marker.getInt("music") != 0;
 
-                Place place = new Place(title, text, x, y, yt, category);
+                Log.i("initMarkerMap", "title is  " + title);
 
-                if (map.containsKey(category)) {
-                    map.get(category).add(place);
+                Place place = new Place(title, text, x, y, yt, category, address, phone, link, news, smoking, baby, parking, music);
+
+                place.setResourceId(navMenuIcons.getResourceId(category, 0));
+
+                if (mCategoryList.containsKey(category)) {
+                    mCategoryList.get(category).add(place);
                 } else {
                     ArrayList<Place> list = new ArrayList<Place>();
                     list.add(place);
-                    map.put(category, list);
+                    mCategoryList.put(category, list);
                 }
-            }
-        } else {
-            //        Toast.makeText(getBaseContext(), "json file success tag error", Toast.LENGTH_SHORT).show();
-        }
 
+            }
+
+        }
+//       navMenuIcons.recycle();
     }
 
 
@@ -357,48 +366,6 @@ public class MapsActivity extends ActionBarActivity {
         return builder.toString();
     }
 
-    private void initActionBarDropDown() throws NullPointerException {
-
-        List<String> categories = new ArrayList<String>();
-        String all = "все категории";
-        categories.add(all);
-        items.put(1, all);
-
-        for (String category : map.keySet()) {
-            categories.add(category);
-            items.put(items.size() + 1, category);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, categories);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
-        ActionBar.OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
-
-            @Override
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-
-                if (itemPosition == 0) {
-                    for (List<Place> places : map.values()) {
-                        for (Place place : places) {
-                            place.getMarker().setVisible(true);
-                        }
-                    }
-                } else {
-                    String item = items.get(itemPosition + 1);
-                    for (String category : map.keySet()) {
-                        boolean b = category.equals(item);
-                        for (Place place : map.get(category)) {
-                            place.getMarker().setVisible(b);
-                        }
-                    }
-                }
-
-                return true;
-            }
-        };
-        getActionBar().setListNavigationCallbacks(adapter, navigationListener);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -425,7 +392,7 @@ public class MapsActivity extends ActionBarActivity {
             @Override
             public View getInfoWindow(Marker marker) {
                 if (currentMarker != null) {
-                    Marker show = currentMarker.first;
+                    Marker show = currentMarker.getMarker();
                     if (show != null && show.isInfoWindowShown()) {
                         show.hideInfoWindow();
                         show.showInfoWindow();
@@ -443,32 +410,40 @@ public class MapsActivity extends ActionBarActivity {
                 String text = null;
                 String ytId = null;
 
-                for (String category : map.keySet()) {
-                    for (Place place : map.get(category)) {
+                for (int category : mCategoryList.keySet()) {
+                    for (Place place : mCategoryList.get(category)) {
                         if (marker.getTitle().equals(place.getTitle())) {
                             text = place.getText();
                             ytId = place.getYouTubeId();
+                            currentMarker = place;
 
                         }
                     }
                 }
 
-                currentMarker = new Pair<Marker, String>(marker, ytId);
 
                 description.setText(text);
-                String url = String.format("http://img.youtube.com/vi/" + ytId + "/1.jpg");
-                ImageView image = (ImageView) v.findViewById(R.id.imageView);
+                String url1 = String.format("http://img.youtube.com/vi/" + ytId + "/1.jpg");
+                String url2 = String.format("http://img.youtube.com/vi/" + ytId + "/2.jpg");
+                String url3 = String.format("http://img.youtube.com/vi/" + ytId + "/3.jpg");
 
-                imageLoader.displayImage(url, image, options,
-                        new SimpleImageLoadingListener() {
+                ImageView image1 = (ImageView) v.findViewById(R.id.image1);
+                ImageView image2 = (ImageView) v.findViewById(R.id.image2);
+                ImageView image3 = (ImageView) v.findViewById(R.id.image3);
+
+                imageLoader.displayImage(url1, image1, options);
+                imageLoader.displayImage(url2, image2, options);
+                imageLoader.displayImage(url3, image3, options);
+
+
+   /*             imageLoader.displayImage(url1, image1, options, new SimpleImageLoadingListener() {
                             @Override
-                            public void onLoadingComplete(String imageUri,
-                                                          View view, Bitmap loadedImage) {
-                                super.onLoadingComplete(imageUri, view,
-                                        loadedImage);
+                            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                super.onLoadingComplete(imageUri, view, loadedImage);
                                 getInfoWindow(marker);
                             }
                         });
+                */
                 return v;
             }
         });
@@ -476,7 +451,7 @@ public class MapsActivity extends ActionBarActivity {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(getBaseContext(), YouTubePlayerActivity.class);
-                intent.putExtra(YOUTUBE_ID, currentMarker.second);
+                intent.putExtra(YOUTUBE_ID, currentMarker);
                 startActivity(intent);
             }
         });
@@ -484,15 +459,15 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     private void setUpMarkers() {
-        Log.i("setUpMarkers", "items number " + map.size());
+        Log.i("setUpMarkers", "items number " + mCategoryList.size());
         LatLng latLng = null;
 
-        for (String category : map.keySet()) {
-            for (Place place : map.get(category)) {
+        for (int category : mCategoryList.keySet()) {
+            for (Place place : mCategoryList.get(category)) {
                 MarkerOptions options = new MarkerOptions();
                 latLng = new LatLng(place.getX(), place.getY());
                 options.title(place.getTitle()).position(latLng);
-                options.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+                options.icon(BitmapDescriptorFactory.fromResource(place.getResourceId()));
                 place.setMarker(mMap.addMarker(options));
                 Log.i("setUpMarkers", "marker is null " + (place.getMarker() == null));
             }
@@ -500,6 +475,10 @@ public class MapsActivity extends ActionBarActivity {
         if (latLng != null)
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
 
+        directions();
+    }
+
+    private void directions() {
         LatLng start = new LatLng(13.744246499553903, 100.53428772836924);
         LatLng end = new LatLng(13.751279688694071, 100.54316081106663);
 
@@ -576,7 +555,8 @@ public class MapsActivity extends ActionBarActivity {
         protected void onPostExecute(String file_url) {
             pDialog.dismiss();
             setUpMarkers();
-            //      initActionBarDropDown();
+            initDrawerList();
+
         }
     }
 }

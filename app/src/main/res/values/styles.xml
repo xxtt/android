@@ -22,4 +22,9 @@
     </style>
     <drawable name="actionbar_background">#FFFFFF</drawable>
 
+    <style name="UiTestTextView">
+        <item name="android:textColor">#000</item>
+        <item name="android:textSize">12sp</item>
+     </style>
+
 </resources>
