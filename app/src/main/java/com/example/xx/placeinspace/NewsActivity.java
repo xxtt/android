@@ -22,15 +22,7 @@ import android.widget.Toast;
 
 import com.example.xml.Place;
 
-/**
- * @author Pranay Airan
- */
 public class NewsActivity extends ListActivity {
-
-    public class codeLeanChapter {
-        String chapterName;
-        String chapterDescription;
-    }
 
     CodeLearnAdapter chapterListAdapter;
     ArrayList<Place> placeList;
@@ -39,24 +31,19 @@ public class NewsActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.news_layout);
-
         Intent mIntent = getIntent();
         placeList = mIntent.getParcelableArrayListExtra(MapsActivity.NEWS_FEED);
-
         chapterListAdapter = new CodeLearnAdapter();
-
         setListAdapter(chapterListAdapter);
-
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-
         Place place = chapterListAdapter.getPlace(position);
-
-        Intent intent = new Intent(getBaseContext(), YouTubePlayerActivity.class);
-        intent.putExtra(MapsActivity.YOUTUBE_ID, place);
-        startActivity(intent);
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(MapsActivity.PLACE, place);
+        setResult(RESULT_OK, resultIntent);
+        super.onBackPressed();
     }
 
     public class CodeLearnAdapter extends BaseAdapter {
@@ -64,19 +51,16 @@ public class NewsActivity extends ListActivity {
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return placeList.size();
         }
 
         @Override
         public Place getItem(int arg0) {
-            // TODO Auto-generated method stub
             return placeList.get(arg0);
         }
 
         @Override
         public long getItemId(int arg0) {
-            // TODO Auto-generated method stub
             return arg0;
         }
 

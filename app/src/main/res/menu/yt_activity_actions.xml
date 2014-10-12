@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:yt="http://schemas.android.com/apk/res-auto">
+    xmlns:youtube="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_search"
+        android:id="@+id/action_call"
         android:icon="@drawable/ic_action_call"
         android:title="@string/action_call"
-        yt:showAsAction="always" />
+        youtube:showAsAction="always" />
 
     <item
-        android:id="@+id/action_news"
+        android:id="@+id/action_directions"
         android:icon="@drawable/ic_action_directions"
         android:title="@string/action_directions"
-        yt:showAsAction="always" />
-
+        youtube:showAsAction="always" />
 
     <item
-        android:id="@+id/action_share"
+        android:id="@+id/action_place_share"
         android:icon="@drawable/ic_action_share"
         android:title="@string/action_share"
-        yt:showAsAction="always" />
+        youtube:showAsAction="always" />
 
 </menu>

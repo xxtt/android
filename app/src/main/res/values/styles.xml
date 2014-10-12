@@ -10,7 +10,7 @@
     </style>
 
     <!-- ActionBar styles -->
-    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:background">@drawable/actionbar_background</item>
         <item name="android:titleTextStyle">@style/MyTitleTextStyle</item>
 

@@ -2,61 +2,59 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/info_window_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/info_margin"
-        android:layout_marginTop="@dimen/info_margin"
+        android:layout_marginBottom="@dimen/info_margin"
         android:text="title"
-        android:textSize="11dp"
+        android:textSize="12dp"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/image1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/info_window_title"
-        android:layout_marginLeft="@dimen/info_margin"
-        android:src="@drawable/ic_launcher" />
+        android:layout_width="120px"
+        android:layout_height="90px"
+        android:layout_below="@+id/info_window_title" />
 
     <ImageView
         android:id="@+id/image2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120px"
+        android:layout_height="90px"
         android:layout_below="@+id/info_window_title"
-        android:layout_toRightOf="@+id/image1"
-        android:src="@drawable/ic_launcher" />
+        android:layout_toRightOf="@+id/image1" />
 
     <ImageView
         android:id="@+id/image3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120px"
+        android:layout_height="90px"
         android:layout_below="@+id/info_window_title"
-        android:layout_toRightOf="@+id/image2"
-        android:src="@drawable/ic_launcher" />
+        android:layout_toRightOf="@+id/image2" />
 
     <TextView
-        android:id="@+id/info_window_description"
+        android:id="@+id/info_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/info_margin"
+
         android:layout_below="@+id/image1"
-        android:layout_marginLeft="@dimen/info_margin"
-        android:text="text"
-        android:textSize="11dp" />
+      android:text="text"
+        android:textSize="12dp" />
 
     <TextView
         android:id="@+id/more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image1"
+      android:layout_marginTop="@dimen/info_margin"
         android:layout_marginLeft="@dimen/info_margin"
-        android:layout_toRightOf="@+id/info_window_description"
+        android:layout_below="@+id/image1"
+        android:layout_toRightOf="@+id/info_category"
         android:text="@string/more"
         android:textColor="#ff5284fa"
-        android:textSize="11dp"
+        android:textSize="12dp"
         android:textStyle="italic" />
 
 </RelativeLayout>

@@ -5,99 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:text="text"
-            style="@style/UiTestTextView" />
-
-        <TextView
-            android:id="@+id/address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/text"
-            android:layout_marginLeft="10dp"
-            android:text="@string/address"
-            style="@style/UiTestTextView" />
-
-        <TextView
-            android:id="@+id/address_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/text"
-            android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/address"
-
-            style="@style/UiTestTextView" />
-
-        <TextView
-            android:id="@+id/phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/address"
-            android:layout_marginLeft="10dp"
-            android:text="@string/phone"
-            style="@style/UiTestTextView" />
-
-        <TextView
-            android:id="@+id/phone_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/address"
-            android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@+id/phone"
-            android:text="+38063856632"
-            style="@style/UiTestTextView" />
-
-        <TextView
-            android:id="@+id/link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/phone"
-            android:layout_marginLeft="10dp"
-            android:text="www.placeins.com"
-            style="@style/UiTestTextView" />
-
-        <ImageView
-            android:id="@+id/baby"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/link"
-            android:src="@drawable/ic_action_baby" />
-
-        <ImageView
-            android:id="@+id/parking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/link"
-            android:layout_toRightOf="@+id/baby"
-            android:src="@drawable/ic_action_parking" />
-
-        <ImageView
-            android:id="@+id/smoking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/link"
-            android:layout_toRightOf="@+id/parking"
-            android:src="@drawable/ic_action_smoking" />
-
-        <ImageView
-            android:id="@+id/music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/link"
-            android:layout_toRightOf="@+id/smoking"
-            android:src="@drawable/ic_action_music" />
-
-    </RelativeLayout>
+    <include layout="@layout/yt_header" />
 
     <LinearLayout
         android:id="@+id/youtube"
@@ -122,22 +30,22 @@
 
         <TextView
             android:id="@+id/news"
+            style="@style/UiTestTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:text="@string/action_news"
-            style="@style/UiTestTextView"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/news_text"
+            style="@style/UiTestTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/news"
-            android:layout_marginLeft="10dp"
 
-            style="@style/UiTestTextView" />
+            android:layout_marginLeft="10dp" />
 
     </RelativeLayout>
 

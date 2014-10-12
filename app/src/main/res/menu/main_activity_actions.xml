@@ -14,13 +14,13 @@
         android:id="@+id/action_news"
         android:icon="@drawable/ic_action_email"
         android:title="@string/action_news"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|withText" />
 
 
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_action_share"
         android:title="@string/action_share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|withText" />
 
 </menu>

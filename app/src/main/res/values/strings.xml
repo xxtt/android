@@ -7,16 +7,21 @@
     <string name="drawer_close">Close</string>
     <string name="action_search">Search</string>
     <string name="action_share">Share</string>
-    <string name="send_to">Share App with ...</string>
+    <string name="send_app_to">Share app with ...</string>
     <string name="app_label">Label</string>
     <string name="search_hint">Hint</string>
     <string name="action_news">News</string>
     <string name="desc_list_item_icon">Item Icon</string>
-    <string name="action_directions">Directions</string>
+    <string name="action_directions">Dir</string>
     <string name="action_call">Call</string>
     <string name="address">address:</string>
     <string name="phone">phone:</string>
     <string name="more">see more ..</string>
+    <string name="share_app_text">Place in Space is awesome !!</string>
+    <string name="send_place_to">Share place with ...</string>
+    <string name="share_place_text">This place is awesome !!</string>
+    <string name="no_internet">You are not connected to the internet but that\'s not something to be sad about :)</string>
+    <string name="no_location">Your location could not be determined</string>
 
     <string-array name="nav_drawer_items">
         <item>All places</item>
