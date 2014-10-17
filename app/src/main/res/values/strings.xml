@@ -2,26 +2,28 @@
 <resources>
 
     <string name="app_name">Place In Space</string>
-    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
-    <string name="drawer_open">Open</string>
-    <string name="drawer_close">Close</string>
+
     <string name="action_search">Search</string>
     <string name="action_share">Share</string>
-    <string name="send_app_to">Share app with ...</string>
-    <string name="app_label">Label</string>
-    <string name="search_hint">Hint</string>
     <string name="action_news">News</string>
-    <string name="desc_list_item_icon">Item Icon</string>
-    <string name="action_directions">Dir</string>
+    <string name="action_directions">Directions</string>
     <string name="action_call">Call</string>
     <string name="address">address:</string>
     <string name="phone">phone:</string>
-    <string name="more">see more ..</string>
-    <string name="share_app_text">Place in Space is awesome !!</string>
-    <string name="send_place_to">Share place with ...</string>
-    <string name="share_place_text">This place is awesome !!</string>
-    <string name="no_internet">You are not connected to the internet but that\'s not something to be sad about :)</string>
-    <string name="no_location">Your location could not be determined</string>
+    <string name="more">see more …</string>
+
+    <string name="share_place_text">Check this cool place out! I love it!</string>
+    <string name="share_place_with">Tell your friends about this place!</string>
+
+    <string name="share_app_with">Tell your friends about us!</string>
+    <string name="share_app_text">Place in Space is a new app that shares 1 minute videos about super awesome places around the world! Check it out! http://placeins.com</string>
+
+    <string name="no_location">Your location has not been set</string>
+    <string name="splash_text">Loading data, please wait …</string>
+    <string name="splash_try_again">Please check your internet connection.\n And touch the screen to try again.</string>
+
+    <string name="jsonError">Data load error, please inform us about that</string>
+    <string name="error_player">An error initializing the YouTube, please try again or inform us about that</string>
 
     <string-array name="nav_drawer_items">
         <item>All places</item>
@@ -37,9 +39,7 @@
         <item>Beauty &amp; Spa</item>
         <item>Hotels &amp; Hostels</item>
         <item>PlaceInCity</item>
-        <item>Other..</item>
-
-
+        <item>Other</item>
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -58,6 +58,4 @@
         <item>@drawable/city</item>
         <item>@drawable/other</item>
     </array>
-
-
 </resources>

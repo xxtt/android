@@ -23,6 +23,10 @@
             android:name=".MapsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable">
+            </meta-data>
         </activity>
 
         <activity

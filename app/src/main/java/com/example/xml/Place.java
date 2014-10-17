@@ -3,9 +3,10 @@ package com.example.xml;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.xx.placeinspace.R;
 import com.google.android.gms.maps.model.Marker;
 
-import java.io.Serializable;
+import java.util.Locale;
 
 public class Place implements Parcelable {
 
@@ -23,6 +24,7 @@ public class Place implements Parcelable {
     private boolean baby;
     private boolean parking;
     private boolean music;
+    private int bill;
     private Marker marker = null;
     private int resourceId;
 
@@ -40,6 +42,7 @@ public class Place implements Parcelable {
         baby = source.readByte() != 0;
         parking = source.readByte() != 0;
         music = source.readByte() != 0;
+        bill = source.readInt();
         resourceId = source.readInt();
 
     }
@@ -77,7 +80,6 @@ public class Place implements Parcelable {
     }
 
     public String getAddress() {
-
         return address;
     }
 
@@ -93,8 +95,9 @@ public class Place implements Parcelable {
         return news;
     }
 
-    public boolean isSmoking() {
-        return smoking;
+    public int getSmokingResourceId() {
+        if (smoking) return R.drawable.ic_action_smoking;
+        else return R.drawable.ic_action_no_smoking;
     }
 
     public boolean isBaby() {
@@ -109,7 +112,7 @@ public class Place implements Parcelable {
         return music;
     }
 
-    public Place(String title, String text, double x, double y, String youTubeId, int category, String address, String phone, String link, String news, boolean smoking, boolean baby, boolean parking, boolean music) {
+    public Place(String title, String text, double x, double y, String youTubeId, int category, String address, String phone, String link, String news, boolean smoking, boolean baby, boolean parking, boolean music, int bill) {
         this.title = title;
         this.text = text;
         this.x = x;
@@ -124,6 +127,7 @@ public class Place implements Parcelable {
         this.baby = baby;
         this.parking = parking;
         this.music = music;
+        this.bill = bill;
     }
 
     public void setMarker(Marker marker) {
@@ -187,13 +191,31 @@ public class Place implements Parcelable {
         this.resourceId = resourceId;
     }
 
-    public int getResourceId() {
+    public int getIconResourceId() {
         return resourceId;
     }
 
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public void setBill(int bill) {
+        this.bill = bill;
+    }
+
+    public int getBillResourceId() {
+
+        switch (bill) {
+            case 1:
+                return R.drawable.ic_action_1_dolar;
+            case 2:
+                return R.drawable.ic_action_2_dolar;
+            case 3:
+                return R.drawable.ic_action_3_dolar;
+            default:
+                return R.drawable.ic_action_1_dolar;
+        }
     }
 
     @Override
@@ -211,6 +233,8 @@ public class Place implements Parcelable {
         dest.writeByte((byte) (baby ? 1 : 0));
         dest.writeByte((byte) (parking ? 1 : 0));
         dest.writeByte((byte) (music ? 1 : 0));
+        dest.writeInt(bill);
+
         dest.writeInt(resourceId);
     }
 

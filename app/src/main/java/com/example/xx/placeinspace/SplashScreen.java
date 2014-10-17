@@ -1,10 +1,16 @@
 package com.example.xx.placeinspace;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -23,18 +29,39 @@ public class SplashScreen extends Activity {
 
     public static final String HTTP = "http";
     private ImageView splashImageView;
+    TextView text;
     String json;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash_activity);
 
-        splashImageView = new ImageView(this);
-        splashImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        splashImageView.setImageResource(R.drawable.splash);
-        setContentView(splashImageView);
+        ImageView image = (ImageView) findViewById(R.id.splash_image);
+        text = (TextView) findViewById(R.id.splash_text);
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isNetworkAvailable()) {
+                            text.setText(getResources().getString(R.string.splash_text));
+                            new JsonHttpRequest().execute();
+                        }
+                    }
+                });
+            }
+        });
 
         new JsonHttpRequest().execute();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
     }
 
 
@@ -50,7 +77,10 @@ public class SplashScreen extends Activity {
         }
 
         protected void onPostExecute(String file_url) {
-            start();
+            if (json != null) {
+                start();
+            } else
+                text.setText(getResources().getString(R.string.splash_try_again));
         }
     }
 
@@ -64,7 +94,7 @@ public class SplashScreen extends Activity {
     public String http() {
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet("http://place-in-space.esy.es/get.php");
+        HttpGet httpGet = new HttpGet("http://placeins.com/admin/get.php");
         try {
             HttpResponse response = client.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
@@ -79,7 +109,7 @@ public class SplashScreen extends Activity {
                 }
             }
         } catch (IOException e) {
-            Toast.makeText(getBaseContext(), "json read exception", Toast.LENGTH_SHORT).show();
+            return null;
         }
         return builder.toString();
     }

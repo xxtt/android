@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/footer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/youtube"
+    android:layout_margin="5dp" >
+
+    <TextView
+        android:id="@+id/address"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/address" />
+
+    <TextView
+        android:id="@+id/address_text"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/address" />
+
+    <TextView
+        android:id="@+id/phone"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address"
+        android:text="@string/phone" />
+
+    <TextView
+        android:id="@+id/phone_text"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/phone"
+        android:text="+380633283297" />
+
+    <TextView
+        android:id="@+id/link"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phone"
+        android:text="http://placeins.com"
+        android:textColor="#ff5284fa" />
+
+    <TextView
+        android:id="@+id/news"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/link"
+       android:layout_marginTop="10dp"
+        android:text="@string/action_news"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/news_text"
+        style="@style/UiTestTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/news"/>
+
+</RelativeLayout>

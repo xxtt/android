@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Place In Space</string>
+    <string name="action_search">Поиск</string>
+    <string name="action_share">Рассказать</string>
+    <string name="action_news">Новости</string>
+    <string name="action_directions">Направления</string>
+    <string name="action_call">Позвонить</string>
+    <string name="address">адрес:</string>
+    <string name="phone">телефон:</string>
+    <string name="more">смотреть дальше …</string>
+
+    <string name="share_place_with">Рассказать о заведении!</string>
+    <string name="share_place_text">Посетил это заведение. Очень понравилось - смотрите детали по этой ссылке!</string>
+
+    <string name="share_app_with">Рассказать о нас!</string>
+    <string name="share_app_text">Скачал новое приложение! По одноминутному видеоролику о каждой локации. Удобно и качественно! http://placeins.com</string>
+
+    <string name="no_location">Ваше местоположение не установлено</string>
+    <string name="splash_text">Загрузка данных, пожалуйста, подождите …</string>
+    <string name="splash_try_again">Пожалуйста, проверьте подключение к Интернету.\n И коснитесь экрана, чтобы повторить попытку.</string>
+
+    <string name="jsonError">Ошибка загрузки данных, пожалуйста, сообщите нам об этом</string>
+    <string name="error_player">Ошибка инициализации YouTube, пожалуйста, попробуйте снова или сообщите нам об этом</string>
+
+    <string-array name="nav_drawer_items">
+        <item>Все рубрики</item>
+        <item>Рестораны</item>
+        <item>Пабы и бары</item>
+        <item>Кофе и Чай</item>
+        <item>Здоровье и Медицина</item>
+        <item>Шопинг</item>
+        <item>Ночная жизнь</item>
+        <item>Искусство и Развлечение</item>
+        <item>Интелектуальные клубы</item>
+        <item>Спорт и Фитнес</item>
+        <item>Салоны и СПА</item>
+        <item>Отели и хостелы</item>
+        <item>PlaceInCity</item>
+        <item>Другое</item>
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/all</item>
+        <item>@drawable/restaurant</item>
+        <item>@drawable/pub</item>
+        <item>@drawable/coffee</item>
+        <item>@drawable/health</item>
+        <item>@drawable/shopping</item>
+        <item>@drawable/night</item>
+        <item>@drawable/arts</item>
+        <item>@drawable/intellectual</item>
+        <item>@drawable/sport</item>
+        <item>@drawable/beauty</item>
+        <item>@drawable/hotels</item>
+        <item>@drawable/city</item>
+        <item>@drawable/other</item>
+    </array>
+</resources>

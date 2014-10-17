@@ -1,8 +1,7 @@
 package com.example.xx.placeinspace;
 
+import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,15 +9,12 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +30,7 @@ import com.example.xx.placeinspace.adapter.NavDrawerListAdapter;
 import com.example.xx.placeinspace.model.NavDrawerItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -56,18 +52,20 @@ import org.w3c.dom.Document;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
-public class MapsActivity extends ActionBarActivity {
+public class MapsActivity extends Activity {
 
     private static final int YOUTUBE = 1;
     private static final int NEWS = 2;
     public final static String PLACE = "PLACE";
     public final static String NEWS_FEED = "NEWS_FEED";
+    public static final String LOCATION = "LOCATION";
 
     private GoogleMap mMap;
-    static Map<Integer, List<Place>> mCategoryList = new HashMap<Integer, List<Place>>();
+    static Map<Integer, List<Place>> mCategoryList;
     private Place currentMarker;
 
     private DrawerLayout mDrawerLayout;
@@ -82,8 +80,11 @@ public class MapsActivity extends ActionBarActivity {
     GoogleDirection gd;
     Polyline polyline;
 
+    LatLng myLocation;
     private ImageLoader imageLoader;
     private DisplayImageOptions options;
+    private LatLng placeLocation;
+    private String language = Locale.getDefault().getLanguage();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,16 +100,32 @@ public class MapsActivity extends ActionBarActivity {
         String http = getIntent().getStringExtra(SplashScreen.HTTP);
         try {
             initCategoryList(http);
-
-            putMapMarkers();
-            initDrawerList();
-
-            if (savedInstanceState == null) {
-                displayView(0);
-            }
         } catch (JSONException e) {
-            Toast.makeText(getBaseContext(), "place load error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), R.string.jsonError, Toast.LENGTH_LONG).show();
         }
+
+        setMapMarkers();
+        initDrawerList();
+
+        if (savedInstanceState == null) displayView(0);
+
+        animateCameraOnStart();
+
+    }
+
+    private void animateCameraOnStart() {
+        LatLng location = null;
+        if (checkCurrentLocation()) location = myLocation;
+        else {
+            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+            if (lastKnownLocation != null) {
+                location = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            }
+        }
+        if (location != null) mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 12));
+
     }
 
     private void initDrawerLayout() {
@@ -124,8 +141,8 @@ public class MapsActivity extends ActionBarActivity {
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.drawable.ic_drawer,
-                R.string.drawer_open,
-                R.string.drawer_close
+                R.string.app_name,
+                R.string.app_name
         ) {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
@@ -145,11 +162,6 @@ public class MapsActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_actions, menu);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager
-                .getSearchableInfo(getComponentName()));
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -176,9 +188,8 @@ public class MapsActivity extends ActionBarActivity {
             ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // display view for selected nav drawer item
             displayView(position);
-            removePolyline();
+            removePolyLine();
         }
     }
 
@@ -201,7 +212,7 @@ public class MapsActivity extends ActionBarActivity {
 
         mDrawerList.setItemChecked(position, true);
         mDrawerList.setSelection(position);
-        setTitle(navMenuTitles[position]);
+        setTitle(navDrawerItems.get(position).getTitle());
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
@@ -220,6 +231,7 @@ public class MapsActivity extends ActionBarActivity {
                 ArrayList<Place> list = new ArrayList<Place>();
                 for (List<Place> places : mCategoryList.values()) {
                     for (Place place : places) {
+                        Log.i("news", "place is  " + place.getTitle());
                         if (!place.getNews().isEmpty()) list.add(place);
                     }
                 }
@@ -227,7 +239,7 @@ public class MapsActivity extends ActionBarActivity {
                 Intent intent = new Intent(this, NewsActivity.class);
                 intent.putParcelableArrayListExtra(NEWS_FEED, list);
                 startActivityForResult(intent, NEWS);
-                removePolyline();
+                removePolyLine();
                 return true;
             case R.id.action_share:
                 share();
@@ -271,16 +283,17 @@ public class MapsActivity extends ActionBarActivity {
 
     ///////////////Drawer code ends //////////////////
 
-
     private void share() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.share_app_text));
         sendIntent.setType("text/plain");
-        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_app_to)));
+        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_app_with)));
     }
 
     private void initCategoryList(String http) throws JSONException {
+        mCategoryList = new HashMap<Integer, List<Place>>();
+
         JSONObject json = new JSONObject(http);
         int success = json.getInt("success");
         JSONArray markers = null;
@@ -293,24 +306,21 @@ public class MapsActivity extends ActionBarActivity {
                 JSONObject marker = markers.getJSONObject(i);
 
                 String title = marker.getString("title");
-                String text = marker.getString("description");
+                String about = getJsonAbout(marker);
                 double x = marker.getDouble("x");
                 double y = marker.getDouble("y");
                 String yt = marker.getString("yt");
                 int category = marker.getInt("category");
-                String address = marker.getString("address");
+                String address = getJsonAddress(marker);
                 String phone = marker.getString("phone");
                 String link = marker.getString("link");
-                String news = marker.getString("news");
+                String news = getJsonNews(marker);
                 boolean smoking = marker.getInt("smoking") != 0;
                 boolean baby = marker.getInt("baby") != 0;
                 boolean parking = marker.getInt("parking") != 0;
                 boolean music = marker.getInt("music") != 0;
-
-                Log.i("initMarkerMap", "title is  " + title);
-
-                Place place = new Place(title, text, x, y, yt, category, address, phone, link, news, smoking, baby, parking, music);
-
+                int bill = marker.getInt("bill");
+                Place place = new Place(title, about, x, y, yt, category, address, phone, link, news, smoking, baby, parking, music, bill);
                 place.setResourceId(navMenuIcons.getResourceId(category, 0));
 
                 if (mCategoryList.containsKey(category)) {
@@ -320,13 +330,39 @@ public class MapsActivity extends ActionBarActivity {
                     list.add(place);
                     mCategoryList.put(category, list);
                 }
-
             }
-
         }
-//       navMenuIcons.recycle();
     }
 
+    private String getJsonNews(JSONObject marker) throws JSONException {
+        if (language.equals("uk")) {
+            return marker.getString("news_ua");
+        } else if (language.equals("ru")) {
+            return marker.getString("news_ru");
+        } else {
+            return marker.getString("news_us");
+        }
+    }
+
+    private String getJsonAbout(JSONObject marker) throws JSONException {
+        if (language.equals("uk")) {
+            return marker.getString("about_ua");
+        } else if (language.equals("ru")) {
+            return marker.getString("about_ru");
+        } else {
+            return marker.getString("about_us");
+        }
+    }
+
+    private String getJsonAddress(JSONObject marker) throws JSONException {
+        if (language.equals("uk")) {
+            return marker.getString("address_ua");
+        } else if (language.equals("ru")) {
+            return marker.getString("address_ru");
+        } else {
+            return marker.getString("address_us");
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -337,7 +373,7 @@ public class MapsActivity extends ActionBarActivity {
     private void setUpMapIfNeeded() {
         if (mMap == null) {
 
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                     .getMap();
             if (mMap != null) {
                 setUpMap();
@@ -377,11 +413,9 @@ public class MapsActivity extends ActionBarActivity {
                             text = navMenuTitles[place.getCategory()];
                             ytId = place.getYouTubeId();
                             currentMarker = place;
-
                         }
                     }
                 }
-
 
                 description.setText(text);
                 String url1 = String.format("http://img.youtube.com/vi/" + ytId + "/1.jpg");
@@ -392,9 +426,25 @@ public class MapsActivity extends ActionBarActivity {
                 ImageView image2 = (ImageView) v.findViewById(R.id.image2);
                 ImageView image3 = (ImageView) v.findViewById(R.id.image3);
 
-                imageLoader.displayImage(url1, image1, options);
-                imageLoader.displayImage(url2, image2, options);
+                //  imageLoader.displayImage(url1, image1, options);
+                //  imageLoader.displayImage(url2, image2, options);
                 //    imageLoader.displayImage(url3, image3, options);
+
+                imageLoader.displayImage(url1, image1, options, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        super.onLoadingComplete(imageUri, view, loadedImage);
+                        getInfoWindow(marker);
+                    }
+                });
+
+                imageLoader.displayImage(url2, image2, options, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        super.onLoadingComplete(imageUri, view, loadedImage);
+                        getInfoWindow(marker);
+                    }
+                });
 
                 imageLoader.displayImage(url3, image3, options, new SimpleImageLoadingListener() {
                     @Override
@@ -403,17 +453,19 @@ public class MapsActivity extends ActionBarActivity {
                         getInfoWindow(marker);
                     }
                 });
-
                 return v;
             }
         });
+
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(getBaseContext(), YouTubePlayerActivity.class);
                 intent.putExtra(PLACE, currentMarker);
+                intent.putExtra(LOCATION, checkCurrentLocation());
+                placeLocation = new LatLng(currentMarker.getX(), currentMarker.getY());
                 startActivityForResult(intent, YOUTUBE);
-                removePolyline();
+                removePolyLine();
             }
         });
 
@@ -426,27 +478,13 @@ public class MapsActivity extends ActionBarActivity {
         switch (requestCode) {
             case (YOUTUBE): {
                 if (resultCode == RESULT_OK) {
-                    LatLng start = getCurrentLocation();
-                    if (start != null) {
-                        LatLng end = new LatLng(currentMarker.getX(), currentMarker.getY());
-                        if (isNetworkAvailable()) {
-                            gd.request(start, end, GoogleDirection.MODE_WALKING);
-
-                            // doesn't work
-
-                            if (currentMarker != null) {
-                                currentMarker.getMarker().hideInfoWindow();
-                            }
-
-
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
-                        } else {
-                            Toast.makeText(this, getResources().getText(R.string.no_internet), Toast.LENGTH_SHORT).show();
-                        }
-                    } else
-                        Toast.makeText(this, getResources().getText(R.string.no_location), Toast.LENGTH_SHORT).show();
+                    if (currentMarker != null) {
+                        currentMarker.getMarker().hideInfoWindow();
+                    }
+                    gd.request(myLocation, placeLocation, GoogleDirection.MODE_WALKING);
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
+                    break;
                 }
-                break;
             }
             case (NEWS): {
                 if (resultCode == RESULT_OK) {
@@ -472,25 +510,20 @@ public class MapsActivity extends ActionBarActivity {
         }
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
-    }
+    private boolean checkCurrentLocation() {
+        Location location = mMap.getMyLocation();
 
-    private LatLng getCurrentLocation() {
-        Location myLocation = mMap.getMyLocation();
-
-        if (myLocation != null) {
-            double dLatitude = myLocation.getLatitude();
-            double dLongitude = myLocation.getLongitude();
-            return new LatLng(dLatitude, dLongitude);
+        if (location != null) {
+            double dLatitude = location.getLatitude();
+            double dLongitude = location.getLongitude();
+            myLocation = new LatLng(dLatitude, dLongitude);
+            return true;
         } else {
-            return null;
+            return false;
         }
     }
 
-    void removePolyline() {
+    void removePolyLine() {
         if (polyline != null) {
             polyline.remove();
         }
@@ -507,7 +540,7 @@ public class MapsActivity extends ActionBarActivity {
         });
     }
 
-    private void putMapMarkers() {
+    private void setMapMarkers() {
         LatLng latLng = null;
 
         for (int category : mCategoryList.keySet()) {
@@ -515,14 +548,11 @@ public class MapsActivity extends ActionBarActivity {
                 MarkerOptions options = new MarkerOptions();
                 latLng = new LatLng(place.getX(), place.getY());
                 options.title(place.getTitle()).position(latLng);
-                options.icon(BitmapDescriptorFactory.fromResource(place.getResourceId()));
+                options.icon(BitmapDescriptorFactory.fromResource(place.getIconResourceId()));
                 place.setMarker(mMap.addMarker(options));
             }
         }
-        if (latLng != null)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
     }
-
 
     private void initImageLoader() {
         int memoryCacheSize;

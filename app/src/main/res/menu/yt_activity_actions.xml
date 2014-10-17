@@ -7,18 +7,18 @@
         android:id="@+id/action_call"
         android:icon="@drawable/ic_action_call"
         android:title="@string/action_call"
-        youtube:showAsAction="always" />
+        android:showAsAction="always" />
 
     <item
         android:id="@+id/action_directions"
         android:icon="@drawable/ic_action_directions"
         android:title="@string/action_directions"
-        youtube:showAsAction="always" />
+        android:showAsAction="always" />
 
     <item
         android:id="@+id/action_place_share"
         android:icon="@drawable/ic_action_share"
         android:title="@string/action_share"
-        youtube:showAsAction="always" />
+        android:showAsAction="always" />
 
 </menu>

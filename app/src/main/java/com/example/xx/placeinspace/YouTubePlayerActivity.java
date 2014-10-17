@@ -1,15 +1,15 @@
 package com.example.xx.placeinspace;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Paint;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,7 +32,8 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
     private YouTubePlayerView playerView;
     private YouTubePlayer player;
     private boolean fullscreen;
-    public Place place;
+    private Place place;
+    private boolean location;
 
 
     @Override
@@ -47,18 +48,29 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, place.getTitle() + "\n" + getResources().getText(R.string.share_place_text) + "\n" + place.getLink());
                 sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_place_to)));
+                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.share_place_with)));
                 return true;
             case R.id.action_directions:
-                Intent resultIntent = new Intent();
-                setResult(RESULT_OK, resultIntent);
-                finish();
+                if (location) {
+                    if (isNetworkAvailable()) {
+                        Intent resultIntent = new Intent();
+                        setResult(RESULT_OK, resultIntent);
+                        super.onBackPressed();        // check info window close with finish() !!!
+                    } else
+                        Toast.makeText(this, getResources().getText(R.string.no_location), Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(this, getResources().getText(R.string.no_location), Toast.LENGTH_LONG).show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
     }
 
     @Override
@@ -67,9 +79,10 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
         setContentView(R.layout.youtube_player_layout);
 
         place = (Place) getIntent().getParcelableExtra(MapsActivity.PLACE);
+        location = getIntent().getBooleanExtra(MapsActivity.LOCATION, false);
 
         getActionBar().setTitle(place.getTitle());
-        getActionBar().setIcon(place.getResourceId());
+        getActionBar().setIcon(place.getIconResourceId());
 
 
         baseLayout = (LinearLayout) findViewById(R.id.youtube);
@@ -77,15 +90,15 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
         playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);
 
         TextView text = (TextView) findViewById(R.id.text);
-        text.setText(place.getText());
-
         TextView address = (TextView) findViewById(R.id.address_text);
-        address.setText(place.getAddress());
-
         TextView phone = (TextView) findViewById(R.id.phone_text);
-        phone.setText(place.getPhone());
-
         TextView link = (TextView) findViewById(R.id.link);
+        ImageView smoking = (ImageView) findViewById(R.id.smoking);
+        ImageView bill = (ImageView) findViewById(R.id.bill);
+
+        text.setText(place.getText());
+        address.setText(place.getAddress());
+        phone.setText(place.getPhone());
         link.setText(place.getLink());
         link.setPaintFlags(link.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
@@ -96,13 +109,14 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
             }
         });
 
+
+        smoking.setImageResource(place.getSmokingResourceId());
+        bill.setImageResource(place.getBillResourceId());
+
         if (!place.getNews().isEmpty()) {
             TextView news = (TextView) findViewById(R.id.news_text);
             news.setText(place.getNews());
         }
-        ImageView smoking = (ImageView) findViewById(R.id.smoking);
-        if (place.isSmoking()) smoking.setImageResource(R.drawable.ic_action_smoking);
-        else smoking.setImageResource(R.drawable.ic_action_no_smoking);
 
         if (place.isBaby()) {
             ImageView baby = (ImageView) findViewById(R.id.baby);
@@ -134,7 +148,7 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
         player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
         player.setOnFullscreenListener(this);
         if (!wasRestored) {
-            player.loadVideo(place.getYouTubeId());
+            player.cueVideo(place.getYouTubeId());
         }
     }
 
@@ -168,12 +182,6 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
     public void onFullscreen(boolean isFullscreen) {
         fullscreen = isFullscreen;
         doLayout();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        //      this.finish();
-        return true;
     }
 
     private static final int RECOVERY_DIALOG_REQUEST = 1;
