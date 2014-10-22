@@ -1,12 +1,10 @@
-package com.example.xml;
+package com.app.xml;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.xx.placeinspace.R;
+import com.app.xx.placeinspace.R;
 import com.google.android.gms.maps.model.Marker;
-
-import java.util.Locale;
 
 public class Place implements Parcelable {
 

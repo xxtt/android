@@ -1,4 +1,4 @@
-package com.example.xx.placeinspace.model;
+package com.app.xx.placeinspace.model;
 
 public class NavDrawerItem {
 	

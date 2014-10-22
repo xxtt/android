@@ -1,4 +1,4 @@
-package com.example.xx.placeinspace;
+package com.app.xx.placeinspace;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,32 +1,38 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword 'samsamsam333'
+            storeFile file('C:/Users/xx/keystores/android.jks')
+            storePassword 'samsamsam333'
+        }
+    }
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
-
     defaultConfig {
-        applicationId "com.example.xx.placeinspace"
-        minSdkVersion 15
+        applicationId 'com.app.xx.placeinspace'
+        minSdkVersion 14
         targetSdkVersion 20
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
     }
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
+    }
+    productFlavors {
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    // You must install or update the Google Repository through the SDK manager to use this dependency.
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.google.android.gms:play-services:4.2.42'
     compile 'com.android.support:appcompat-v7:20.+'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.2'
- //   compile 'javax.xml.bind:jaxb-api:2.2.11'
-   // compile 'javax.xml.stream:stax-api:1.0-2'
-
 }

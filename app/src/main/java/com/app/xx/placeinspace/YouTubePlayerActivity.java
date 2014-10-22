@@ -1,4 +1,4 @@
-package com.example.xx.placeinspace;
+package com.app.xx.placeinspace;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.xml.Place;
+import com.app.xml.Place;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
@@ -87,7 +87,7 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
 
         baseLayout = (LinearLayout) findViewById(R.id.youtube);
         playerView = (YouTubePlayerView) findViewById(R.id.player);
-        playerView.initialize(DeveloperKey.DEVELOPER_KEY, this);
+        playerView.initialize(API_KEY, this);
 
         TextView text = (TextView) findViewById(R.id.text);
         TextView address = (TextView) findViewById(R.id.address_text);
@@ -200,7 +200,7 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
-            getYouTubePlayerProvider().initialize(DeveloperKey.DEVELOPER_KEY, this);
+            getYouTubePlayerProvider().initialize(API_KEY, this);
         }
     }
 }

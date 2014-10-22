@@ -1,10 +1,5 @@
-package com.example.xx.placeinspace.adapter;
+package com.app.xx.placeinspace.adapter;
 
-
-import com.example.xx.placeinspace.R;
-import com.example.xx.placeinspace.model.NavDrawerItem;
-
-import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +9,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.app.xx.placeinspace.R;
+import com.app.xx.placeinspace.model.NavDrawerItem;
+
+import java.util.ArrayList;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 	

@@ -1,7 +1,8 @@
-package com.example.xx.placeinspace;
+package com.app.xx.placeinspace;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,12 +23,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.xml.Place;
-import com.example.xx.placeinspace.adapter.NavDrawerListAdapter;
-import com.example.xx.placeinspace.model.NavDrawerItem;
+import com.app.xml.Place;
+import com.app.xx.placeinspace.adapter.NavDrawerListAdapter;
+import com.app.xx.placeinspace.model.NavDrawerItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -85,6 +87,10 @@ public class MapsActivity extends Activity {
     private DisplayImageOptions options;
     private LatLng placeLocation;
     private String language = Locale.getDefault().getLanguage();
+
+    private int mDrawerState;
+    private Menu menu;
+    private List<String> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,15 +150,10 @@ public class MapsActivity extends Activity {
                 R.string.app_name,
                 R.string.app_name
         ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
-
-            public void onDrawerOpened(View drawerView) {
-//                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to hide action bar icons
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+                mDrawerState = newState;
                 invalidateOptionsMenu();
             }
         };
@@ -163,6 +164,12 @@ public class MapsActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_actions, menu);
 
+ /*       this.menu = menu;
+
+        SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView search = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -249,16 +256,28 @@ public class MapsActivity extends Activity {
         }
     }
 
+    private void hideMenuItems(Menu menu, boolean visible) {
+        for (int i = 0; i < menu.size(); i++) {
+            menu.getItem(i).setVisible(visible);
+        }
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (mDrawerList != null) {
-            // if nav drawer is opened, hide the action items
-            boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-            menu.findItem(R.id.action_search).setVisible(!drawerOpen);
-            menu.findItem(R.id.action_share).setVisible(!drawerOpen);
-            menu.findItem(R.id.action_news).setVisible(!drawerOpen);
-        }
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        boolean visible = mDrawerState != DrawerLayout.STATE_DRAGGING &&
+                mDrawerState != DrawerLayout.STATE_SETTLING && !drawerOpen;
+        hideMenuItems(menu, visible);
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -271,14 +290,14 @@ public class MapsActivity extends Activity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        if (mDrawerToggle != null) mDrawerToggle.syncState();
+        mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
-        if (mDrawerToggle != null) mDrawerToggle.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     ///////////////Drawer code ends //////////////////
@@ -535,12 +554,14 @@ public class MapsActivity extends Activity {
 
         gd.setOnDirectionResponseListener(new GoogleDirection.OnDirectionResponseListener() {
             public void onResponse(String status, Document doc, GoogleDirection gd) {
+                removePolyLine();
                 polyline = mMap.addPolyline(gd.getPolyline(doc, 3, Color.RED));
             }
         });
     }
 
     private void setMapMarkers() {
+        items = new ArrayList<String>();
         LatLng latLng = null;
 
         for (int category : mCategoryList.keySet()) {
@@ -550,6 +571,7 @@ public class MapsActivity extends Activity {
                 options.title(place.getTitle()).position(latLng);
                 options.icon(BitmapDescriptorFactory.fromResource(place.getIconResourceId()));
                 place.setMarker(mMap.addMarker(options));
+                items.add(place.getTitle());
             }
         }
     }

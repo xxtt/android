@@ -24,6 +24,12 @@
 
     <string name="jsonError">Помилка завантаження даних, будь ласка, повідомте нам про це</string>
     <string name="error_player">Помилка ініціалізації YouTube, будь ласка, повторіть спробу або повідомте нам про це</string>
+    <!-- debug
+        <string name="google_maps_key">AIzaSyBUDp3_VeHWDw-xoRbeBQDT8qdT4gtVCMg</string>
+     release
+         <string name="google_maps_key">AIzaSyBtLXu-SpuSVF0rDyKQ2moXjqd4xHcAEFw</string>
+    -->
+    <string name="google_maps_key">AIzaSyBtLXu-SpuSVF0rDyKQ2moXjqd4xHcAEFw</string>
 
     <string-array name="nav_drawer_items">
         <item>Всі рубрики</item>
