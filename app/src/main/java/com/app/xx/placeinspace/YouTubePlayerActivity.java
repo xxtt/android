@@ -1,13 +1,11 @@
 package com.app.xx.placeinspace;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Paint;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +33,6 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
     private Place place;
     private boolean location;
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -52,25 +49,18 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
                 return true;
             case R.id.action_directions:
                 if (location) {
-                    if (isNetworkAvailable()) {
-                        Intent resultIntent = new Intent();
-                        setResult(RESULT_OK, resultIntent);
-                        super.onBackPressed();        // check info window close with finish() !!!
-                    } else
-                        Toast.makeText(this, getResources().getText(R.string.no_location), Toast.LENGTH_LONG).show();
+                    Intent resultIntent = new Intent();
+                    setResult(RESULT_OK, resultIntent);
+                    onBackPressed();
                 } else
                     Toast.makeText(this, getResources().getText(R.string.no_location), Toast.LENGTH_LONG).show();
-
+                return true;
+            case android.R.id.home:
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
     }
 
     @Override
@@ -83,11 +73,11 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
 
         getActionBar().setTitle(place.getTitle());
         getActionBar().setIcon(place.getIconResourceId());
-
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         baseLayout = (LinearLayout) findViewById(R.id.youtube);
         playerView = (YouTubePlayerView) findViewById(R.id.player);
-        playerView.initialize(API_KEY, this);
+        playerView.initialize(KEY, this);
 
         TextView text = (TextView) findViewById(R.id.text);
         TextView address = (TextView) findViewById(R.id.address_text);
@@ -200,7 +190,7 @@ public class YouTubePlayerActivity extends YouTubeFailureRecoveryActivity implem
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RECOVERY_DIALOG_REQUEST) {
-            getYouTubePlayerProvider().initialize(API_KEY, this);
+            getYouTubePlayerProvider().initialize(KEY, this);
         }
     }
 }

@@ -19,6 +19,8 @@
     <string name="share_app_text">Завантажив новий додаток! По однохвилинному відеоролику про кожну локацію. Зручно і якісно! http://placeins.com</string>
 
     <string name="no_location">Ваше місце розташування не встановлено</string>
+    <string name="no_direction">Маршрут не встановлено</string>
+
     <string name="splash_text">Завантаження даних, будь ласка, зачекайте …</string>
     <string name="splash_try_again">Будь ласка, перевірте підключення до Інтернету.\n І торкніться екрана, щоб повторити спробу.</string>
 

@@ -2,4 +2,14 @@
 
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
     android:hint="@string/app_name"
-    android:label="@string/app_name" />
+
+    android:includeInGlobalSearch="true"
+
+    android:label="@string/app_name"
+    android:searchSuggestAuthority="com.app.xx.placeinspace.CountryContentProvider"
+    android:searchSuggestIntentAction="android.intent.action.VIEW"
+    android:searchSuggestIntentData="content://com.app.xx.placeinspace.CountryContentProvider/countries"
+    android:searchSuggestSelection=" ?"
+    android:searchSuggestThreshold="1">
+
+</searchable>

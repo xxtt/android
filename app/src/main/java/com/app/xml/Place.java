@@ -7,7 +7,7 @@ import com.app.xx.placeinspace.R;
 import com.google.android.gms.maps.model.Marker;
 
 public class Place implements Parcelable {
-
+    private int id;
     private String title;
     private String text;
     private double x;
@@ -27,6 +27,7 @@ public class Place implements Parcelable {
     private int resourceId;
 
     public Place(Parcel source) {
+        id = source.readInt();
         title = source.readString();
         text = source.readString();
         x = source.readDouble();
@@ -110,7 +111,12 @@ public class Place implements Parcelable {
         return music;
     }
 
-    public Place(String title, String text, double x, double y, String youTubeId, int category, String address, String phone, String link, String news, boolean smoking, boolean baby, boolean parking, boolean music, int bill) {
+    public int getId() {
+        return id;
+    }
+
+    public Place(int id, String title, String text, double x, double y, String youTubeId, int category, String address, String phone, String link, String news, boolean smoking, boolean baby, boolean parking, boolean music, int bill) {
+        this.id = id;
         this.title = title;
         this.text = text;
         this.x = x;
@@ -218,6 +224,7 @@ public class Place implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(text);
         dest.writeDouble(x);

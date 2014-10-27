@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,6 +31,8 @@ public class NewsActivity extends ListActivity {
         placeList = mIntent.getParcelableArrayListExtra(MapsActivity.NEWS_FEED);
 
         setListAdapter(new CustomAdapter(this, R.layout.news_list_item, placeList));
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -41,6 +44,15 @@ public class NewsActivity extends ListActivity {
         onBackPressed();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private class CustomAdapter extends ArrayAdapter<Place> {
         Context context;

@@ -19,6 +19,8 @@
     <string name="share_app_text">Place in Space is a new app that shares 1 minute videos about super awesome places around the world! Check it out! http://placeins.com</string>
 
     <string name="no_location">Your location has not been set</string>
+    <string name="no_direction">Direction has not been set</string>
+
     <string name="splash_text">Loading data, please wait …</string>
     <string name="splash_try_again">Please check your internet connection.\n And touch the screen to try again.</string>
 
