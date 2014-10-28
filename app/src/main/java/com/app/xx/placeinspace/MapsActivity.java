@@ -169,7 +169,7 @@ public class MapsActivity extends Activity {
         if (checkCurrentLocation()) location = myLocation;
         else {
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            String locationProvider = LocationManager.GPS_PROVIDER;
             Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
             if (lastKnownLocation != null) {
                 location = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());

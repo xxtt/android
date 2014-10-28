@@ -48,6 +48,7 @@
         <item>Hotels &amp; Hostels</item>
         <item>PlaceInCity</item>
         <item>Other</item>
+        <item>CENTRAL OFFICE</item>
     </string-array>
 
     <array name="nav_drawer_icons">
@@ -65,5 +66,6 @@
         <item>@drawable/hotels</item>
         <item>@drawable/city</item>
         <item>@drawable/other</item>
+        <item>@drawable/ic_launcher</item>
     </array>
 </resources>
