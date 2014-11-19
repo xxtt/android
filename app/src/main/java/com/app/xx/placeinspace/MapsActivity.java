@@ -169,14 +169,15 @@ public class MapsActivity extends Activity {
         if (checkCurrentLocation()) location = myLocation;
         else {
             LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            String locationProvider = LocationManager.GPS_PROVIDER;
-            Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-            if (lastKnownLocation != null) {
-                location = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            for (String locationProvider : locationManager.getProviders(true)) {
+                Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+                if (lastKnownLocation != null) {
+                    location = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                    break;
+                }
             }
         }
         if (location != null) mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 12));
-
     }
 
     private void initDrawerLayout() {
